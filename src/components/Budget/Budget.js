@@ -9,7 +9,7 @@ import Nav from './../shared/Nav';
 import './Budget.css';
 import { connect } from 'react-redux'
 import { requestUserData } from '../../ducks/userReducer'
-import { requestBudgetData } from '../../ducks/budgetReducer'
+import { requestBudgetData, addPurchase, removePurchase } from '../../ducks/budgetReducer'
 
 
 class Budget extends Component {
@@ -22,8 +22,9 @@ class Budget extends Component {
     // console.log(this.props.budget)
     //destructuring loading off of this.props.budget
     const { loading } = this.props.budget//should have added purchases and budgetLimit but forgot.
-    console.log(this.props)
+    console.log("1", this.props)
     const {firstName, lastName} = this.props.user
+    const { addPurchase, removePurchase } = this.props
     return (
       <Background>
         {loading ? <Loading /> : null}
@@ -31,8 +32,8 @@ class Budget extends Component {
           <Nav firstName={firstName} lastName={lastName} />
           <div className='content-container'>
             <div className="purchases-container">
-              <AddPurchase />
-              <DisplayPurchases purchases={this.props.budget.purchases} />
+              <AddPurchase addPurchase={addPurchase} />
+              <DisplayPurchases removePurchase={removePurchase} purchases={this.props.budget.purchases} />
             </div>
             <div className='chart-container'>
               <Chart1 purchases={this.props.budget.purchases} budgetLimit={this.props.budget.budgetLimit} />
@@ -57,6 +58,6 @@ function mapStateToProps(reduxState){
 //All redux store state values managed by the budgetReducer are now on this.props, including the loading property in the redux store.
 
 
-export default connect(mapStateToProps,{requestUserData, requestBudgetData})(Budget);
+export default connect(mapStateToProps,{requestUserData, requestBudgetData, addPurchase, removePurchase})(Budget);
  //1. state we want
-  //action builders we're using ie {requestUserData, requestBudgetData}
+  //action builders we're using ie {requestUserData, requestBudgetData} also call an action creator object
