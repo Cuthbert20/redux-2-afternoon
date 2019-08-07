@@ -7,24 +7,36 @@ import DisplayPurchases from './../shared/DisplayPurchases';
 import Loading from './../shared/Loading/Loading';
 import Nav from './../shared/Nav';
 import './Budget.css';
+import { connect } from 'react-redux'
+import { requestUserData } from '../../ducks/userReducer'
+import { requestBudgetData } from '../../ducks/budgetReducer'
 
 
 class Budget extends Component {
+  componentDidMount(){
+    this.props.requestUserData()
+    this.props.requestBudgetData()
+  }
 
   render() {
+    // console.log(this.props.budget)
+    //destructuring loading off of this.props.budget
+    const { loading } = this.props.budget//should have added purchases and budgetLimit but forgot.
+    console.log(this.props)
+    const {firstName, lastName} = this.props.user
     return (
       <Background>
-        {true ? <Loading /> : null}
+        {loading ? <Loading /> : null}
         <div className='budget-container'>
-          <Nav />
+          <Nav firstName={firstName} lastName={lastName} />
           <div className='content-container'>
             <div className="purchases-container">
               <AddPurchase />
-              <DisplayPurchases />
+              <DisplayPurchases purchases={this.props.budget.purchases} />
             </div>
             <div className='chart-container'>
-              <Chart1 />
-              <Chart2 />
+              <Chart1 purchases={this.props.budget.purchases} budgetLimit={this.props.budget.budgetLimit} />
+              <Chart2 purchases={this.props.budget.purchases} />
             </div>
           </div>
         </div>
@@ -32,5 +44,19 @@ class Budget extends Component {
     )
   }
 }
+//In the mapStateToProps function, return an object with a budget property and value of the budget slice of state from the redux store.
 
-export default Budget;
+function mapStateToProps(reduxState){
+  console.log(reduxState)
+  return {
+    //to the left is the name in props
+    budget: reduxState.budget,
+    user: reduxState.user
+  }
+}
+//All redux store state values managed by the budgetReducer are now on this.props, including the loading property in the redux store.
+
+
+export default connect(mapStateToProps,{requestUserData, requestBudgetData})(Budget);
+ //1. state we want
+  //action builders we're using ie {requestUserData, requestBudgetData}
